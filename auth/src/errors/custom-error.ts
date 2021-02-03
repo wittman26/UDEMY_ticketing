@@ -8,6 +8,6 @@ export abstract class CustomError extends Error {
     Object.setPrototypeOf(this, CustomError.prototype);
   }
 
-  // It makes sure that ever class that extends this abstract class implements this method
+  // It makes sure that every class that extends this abstract class implements this method
   abstract serializeErrors(): { message: string; field?: string }[];
 }
