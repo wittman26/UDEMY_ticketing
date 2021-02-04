@@ -17,7 +17,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node-dev src/index.ts"
+    "start": "ts-node-dev src/index.ts",
+    "test": "env JWT_KEY=test ts-node-dev src/index.ts",
+    "check-env": "node -e 'console.log(process.env)' | grep npm"
   },
   "keywords": [],
   "author": "",
