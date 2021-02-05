@@ -1,13 +1,16 @@
-import { scrypt, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
+import crypto, { scrypt, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
 import { promisify } from 'util';
 
 const scryptAsync = promisify(scrypt); // Callback to promese implementation
 
 const ALGORITHM = 'aes-256-cbc'; // Difining ALGORITHM
-const KEY = randomBytes(32); // Defining KEY
-const IV = randomBytes(16); // Defining initialization vector
+// Defining KEY
+const KEY = crypto.pbkdf2Sync(Buffer.from('ticketpass'), Buffer.from('ticketsalt'), 65536, 32, 'sha1');
+// Defining initialization vector
+const IV = crypto.pbkdf2Sync(Buffer.from('ticketpass'), Buffer.from('ticketsalt'), 65536, 16, 'sha1');
 
 export class Password {
+
   static encrypt(password: string) {
     var cipher = createCipheriv(ALGORITHM, Buffer.from(KEY), IV);
     // Updating password
