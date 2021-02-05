@@ -8,7 +8,7 @@ RUN node --version
 RUN npm --version
 
 RUN npm install -g npm@7.5.2
-RUN npm install
+RUN npm install --only=prod
 
 RUN node --version
 RUN npm --version
