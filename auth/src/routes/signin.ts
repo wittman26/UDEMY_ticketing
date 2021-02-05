@@ -1,7 +1,11 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
+import jwt from 'jsonwebtoken';
+import { BadRequestError } from '../errors/bad-request-error';
 
 import { validateRequest } from '../middlewares/validate-request';
+import { User } from '../models/user';
+import { Password } from '../services/password';
 
 const router = express.Router();
 
@@ -19,11 +23,41 @@ router.post(
       .withMessage('You must supply a password'),
   ],
   validateRequest,
-  (req: Request, res: Response) => {
-    console.log('It arrives: ' + req.body);
-    console.log('It JWT: ' + process.env.JWT_KEY);
+  async (req: Request, res: Response) => {
+    const { email, password } = req.body;
 
-    res.status(201).send(req.body);
+    // 1. Validate existing email
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      throw new BadRequestError('Invalid credentials');
+    }
+
+    // 2. Validate password supplied against stored
+    const passwordsMatch = await Password.compare(
+      existingUser.password,
+      password
+    );
+
+    if (!passwordsMatch) {
+      throw new BadRequestError('Invalid credentials');
+    }
+
+    // 3. Return JWT
+    // Generate JWT
+    const userjwt = jwt.sign(
+      {
+        id: existingUser.id,
+        email: existingUser.email,
+      },
+      process.env.JWT_KEY!
+    );
+
+    // Store it on session object
+    req.session = {
+      jwt: userjwt,
+    };
+
+    res.status(200).send(existingUser);
   }
 );
 

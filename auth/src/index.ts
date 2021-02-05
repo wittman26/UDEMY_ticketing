@@ -40,16 +40,15 @@ app.use(errorHandler);
 const start = async () => {
   try {
     if(!process.env.JWT_KEY) {
-      process.env.JWT_KEY = 'something';
-      // throw new Error('JWT_KEY must be defined');
+      throw new Error('JWT_KEY must be defined');
     }
     // mongodb://<url-mongodb>:<port>/<database-name>
     // if the database doesn't exist, it will be create id
-    // await mongoose.connect('mongodb://auth-mongo-srv:27017/auth', {
-    //   useNewUrlParser: true,
-    //   useUnifiedTopology: true,
-    //   useCreateIndex: true,
-    // });
+    await mongoose.connect('mongodb://auth-mongo-srv:27017/auth', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+    });
     console.log('Connected to MongoDB');
   } catch (err) {
     console.error(err);

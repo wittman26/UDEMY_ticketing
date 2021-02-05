@@ -33,8 +33,7 @@ router.post(
 
     const user = User.build({ email, password });
     await user.save();
-    console.log('JWT is...');
-    console.log('This value: ' + process.env.JWT_KEY);
+    
     // Generate JWT
     const userjwt = jwt.sign(
       {

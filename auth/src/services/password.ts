@@ -20,7 +20,7 @@ export class Password {
   }
 
   static compare(storedPassword: string, spuppliedPassword: string) {
-    const [iv, hashedPassword] = storedPassword.split('.');
+    const [hashedPassword, iv] = storedPassword.split('.');
 
     let ivBuff = Buffer.from(iv, 'hex');
     let hashedPasswordBuff = Buffer.from(hashedPassword, 'hex');
@@ -28,12 +28,6 @@ export class Password {
     let decrypted = decipher.update(hashedPasswordBuff);
 
     decrypted = Buffer.concat([decrypted, decipher.final()]);
-    console.log(
-      '*** saved password: ' +
-        decrypted +
-        ' supplied password: ' +
-        spuppliedPassword
-    );
     return decrypted.toString() === spuppliedPassword;
   }
 
