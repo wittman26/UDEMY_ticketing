@@ -1,10 +1,12 @@
 import express from 'express';
-import { isRegularExpressionLiteral } from 'typescript';
+
+import { currentUser } from '../middlewares/current-user';
+import { requireAuth } from '../middlewares/require-auth';
 
 const router = express.Router();
 
-router.get('/api/users/currentuser', (req, res) => {
-  res.send('Hello from currentuser');
+router.get('/api/users/currentuser', currentUser, requireAuth, (req, res) => {
+  return res.send({ currentuser: req.currentUser });
 });
 
 export { router as currentUserRouter };

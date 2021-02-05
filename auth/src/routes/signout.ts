@@ -1,10 +1,10 @@
 import express from 'express';
-import { isRegularExpressionLiteral } from 'typescript';
 
 const router = express.Router();
 
 router.post('/api/users/signout', (req, res) => {
-  res.send('Hello from signout');
+  req.session = null;
+  res.send({});
 });
 
 export { router as signoutRouter };
