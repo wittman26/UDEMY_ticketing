@@ -1,46 +1,22 @@
-import axios from 'axios';
+import buildClient from '../api/build-client'
 
 const LandingPage = ({ currentuser }) => {
     // const LandingPage = ({ color}) => { 
 
-    // Executed in the browser
+    // Executed in the BROWSER
     // console.log('I am on the component', color);
-    console.log('OUR CURRENT USER: ' + currentuser);
+    console.log('OUR CURRENT USER: ' + JSON.stringify(currentuser));
 
     return <h1>Landing Page</h1>;
 };
 
 // initial props for nextjs
-// executed during the server renderig process
-LandingPage.getInitialProps = async ( { req }) => {
+// executed during the SERVER renderig process
+LandingPage.getInitialProps = async (context) => {
+    const client = buildClient(context);
+    const { data } = await client.get('/api/users/currentuser')
 
-    console.log(req.headers);
-
-    // if the url is undefined (it is not a navigation to one page to anther)
-    if (typeof window === 'undefined') {
-        // We are no the server!
-        // Request must be http://ingress-nginx-controller.ingress-nginx.svc.cluster.local
-        const { data } = await axios.get(
-            //http://<servicename>.<namespace>.svc.cluster.local
-            // headers: must be specified because the rules in ingress-serv.yaml configuration
-            'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local/api/users/currentuser', {
-                headers: req.headers
-                // headers: {
-                //     Host: 'ticketing.dev'
-                // }
-            })
-
-        return data;        
-    } else {
-        // we are on the browser
-        // requests can be made with a base url of ''
-        // test by navigating to signup successfully
-        const { data } = await axios.get('/api/users/currentuser')
-
-        return data;
-    }
-    return {};
-
+    return data;
     // console.log('I am on the server');
     // return { color: 'red' };
 }
