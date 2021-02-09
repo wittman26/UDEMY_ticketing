@@ -4,7 +4,6 @@ export default ({ req }) => {
     // if the url is undefined (it is not a navigation to one page to anther)
     if (typeof window === 'undefined') {
         // We are no the server!
-
         return axios.create({
             baseURL: 'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local',
             headers: req.headers
