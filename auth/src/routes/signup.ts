@@ -3,9 +3,8 @@ import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 
 import { User } from '../models/user';
-import { validateRequest } from '../middlewares/validate-request';
-import { BadRequestError } from '../errors/bad-request-error';
 
+import { validateRequest, BadRequestError } from '@wagttickets/common';
 const router = express.Router();
 
 router.get('/api/users/signup/health', (req: Request, res: Response) => {
@@ -33,7 +32,7 @@ router.post(
 
     const user = User.build({ email, password });
     await user.save();
-    
+
     // Generate JWT
     const userjwt = jwt.sign(
       {
