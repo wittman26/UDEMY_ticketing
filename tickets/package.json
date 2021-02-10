@@ -19,7 +19,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node-dev src/index.ts",
-    "test": "jest --watchAll --maxWorkers=4 --detectOpenHandles",
+    "test": "jest --watchAll --runInBand --detectOpenHandles --no-cache",
     "local": "SET JWT_KEY=test && SET LOCAL=true && ts-node-dev src/index.ts",
     "check-env": "node -e 'console.log(process.env)' | grep npm"
   },

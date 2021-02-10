@@ -2,12 +2,13 @@ import request from 'supertest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import { app } from '../app';
+import jwt from 'jsonwebtoken';
 
 //Creates a new propertie inside global
 declare global {
   namespace NodeJS {
     interface Global {
-      signin(): Promise<string[]>
+      signin(): string[];
     }
   }
 }
@@ -15,6 +16,7 @@ declare global {
 let mongo: any;
 // Configured a timeout up to 5000 to avoid callback error intests
 jest.setTimeout(30000);
+// jest.setTimeout(60000);
 
 beforeAll(async () => {
   process.env.JWT_KEY = 'asdfasdf';
@@ -24,7 +26,7 @@ beforeAll(async () => {
 
   await mongoose.connect(mongoUri, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   });
 });
 
@@ -41,19 +43,24 @@ afterAll(async () => {
   await mongoose.connection.close();
 });
 
-global.signin = async () => {
-  const email = 'anemail@anemail.com';
-  const password = '123456';
+global.signin = () => {
+  // Build a JWT payload { id, email}
+  const payload = {
+    id: '2345678',
+    email: 'boo@boo.com',
+  };
+  // Create the JWT
+  const token = jwt.sign(payload, process.env.JWT_KEY!);
 
-  const response = await request(app)
-  .post('/api/users/signup')
-  .send({
-    email,
-    password,
-  })
-  .expect(201);
+  // Buld session Object { jwt: MyJwt}
+  const session = { jwt: token };
 
-  const cookie = response.get('Set-Cookie');
+  // Turn that session into JSON
+  const sessionJSON = JSON.stringify(session);
 
-  return cookie;
-}
+  // Take JSON and encode it as base64
+  const base64 = Buffer.from(sessionJSON).toString('base64');
+
+  // return a string with encoded data
+  return [`express:sess=${base64}`];
+};

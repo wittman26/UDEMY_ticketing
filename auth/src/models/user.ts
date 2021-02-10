@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// pre is a method fo mongoose
+// pre is a method of mongoose
 userSchema.pre('save', async function (done) {
   if (this.isModified('password')) {
     const hashed = Password.encrypt(this.get('password'));
