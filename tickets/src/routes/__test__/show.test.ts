@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { app } from '../../app';
-import { Ticket } from '../../models/tickets';
+import mongoose from 'mongoose';
 
 // Control test
 it('tests again', async () => {
@@ -9,8 +9,11 @@ it('tests again', async () => {
 });
 
 it('returns 404 if the ticket is not found', async () => {
+  // Buidls a valid mongoDB id
+  const id = new mongoose.Types.ObjectId().toHexString();
+
   await request(app)
-  .get('/api/tickets/ghghnunssn')
+  .get(`/api/tickets/${id}`)
   .send()
   .expect(404);
 });
