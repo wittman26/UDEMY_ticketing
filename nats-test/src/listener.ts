@@ -13,7 +13,23 @@ const stan = nats.connect('ticketing', randomBytes(4).toString('hex') , {
 stan.on('connect', () => {
   console.log('Listener connected to NATS');
 
-  const subscription = stan.subscribe('ticket:created');
+  // On close will do this
+  stan.on('close', () => {
+    console.log('NATS connection closed');
+    process.exit();
+  })
+
+  const options = stan
+    .subscriptionOptions()
+    .setManualAckMode(true) // Set manual check event ok
+    .setDeliverAllAvailable() // Send all messages available again
+    .setDurableName('ticcket-service'); // Sets a Durable id to handle processes events 
+  // subject/channel, queue group, options
+  const subscription = stan.subscribe(
+    'ticket:created',
+    'orders-service-queue-group',
+    options
+    );
   
   // messages are the events
   subscription.on('message', (msg: Message) => {
@@ -22,8 +38,14 @@ stan.on('connect', () => {
       if(typeof data === 'string') {
           console.log(`Received event #${msg.getSequence()}, with this data: ${msg.getData()}`);
       }
+
+      // Send event ok to NATS
+      msg.ack();
   });
 
 });
 
+// Intercepts Interrupt and terminal signals
+process.on('SIGINT', () => stan.close());
+process.on('SIGTERM', () => stan.close());
 
