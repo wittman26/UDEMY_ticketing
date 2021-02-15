@@ -1,4 +1,4 @@
-import nats, {Message} from 'node-nats-streaming';
+import nats, {Message, Stan} from 'node-nats-streaming';
 import { randomBytes } from 'crypto';
 
 console.clear();
@@ -48,4 +48,17 @@ stan.on('connect', () => {
 // Intercepts Interrupt and terminal signals
 process.on('SIGINT', () => stan.close());
 process.on('SIGTERM', () => stan.close());
+
+abstract class Listener {
+  abstract subject: string;
+  abstract queueGroupName: string;
+  private client: Stan;
+  protected ackWait = 5 * 1000; // 5000 miliseconds
+
+  constructor(client: Stan) {
+    this.client = client;
+  }
+
+  subscriptionOptions() {}
+}
 
