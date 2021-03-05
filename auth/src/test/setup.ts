@@ -3,7 +3,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import { app } from '../app';
 
-//Creates a new propertie inside global
+//Creates a new property inside global
 declare global {
   namespace NodeJS {
     interface Global {
@@ -13,7 +13,7 @@ declare global {
 }
 
 let mongo: any;
-// Configured a timeout up to 5000 to avoid callback error intests
+// Configured a timeout up to 5000 to avoid callback error in tests
 jest.setTimeout(30000);
 
 beforeAll(async () => {
