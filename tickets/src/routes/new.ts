@@ -3,7 +3,7 @@ import { body } from 'express-validator';
 import { requireAuth, validateRequest } from '@wagttickets/common';
 import { Ticket } from '../models/tickets';
 import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher';
-import { Stan } from 'node-nats-streaming';
+import { natsWrapper} from '../nats-wrapper'
 
 const router = express.Router();
 
@@ -28,8 +28,7 @@ router.post(
     await ticket.save();
     
     //Publishing event to NATS
-    const client = new Stan();
-    new TicketCreatedPublisher(client).publish({
+    new TicketCreatedPublisher(natsWrapper.client).publish({
       id: ticket.id,
       title: ticket.title,
       price: ticket.price,

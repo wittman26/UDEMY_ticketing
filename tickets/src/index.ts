@@ -11,7 +11,17 @@ const start = async () => {
     if (!process.env.MONGO_URI) {
       throw new Error('MONGO_URI must be defined');
     }    
+
     await natsWrapper.connect('ticketing', 'randomstring', 'http://nats-srv:4222');
+
+    natsWrapper.client.on('close', () => {
+      console.log('NATS connection closed');
+      process.exit();
+    });
+    // Intercepts Interrupt and terminal signals
+    process.on('SIGINT', () => natsWrapper.client.close());
+    process.on('SIGTERM', () => natsWrapper.client.close());
+
     // mongodb://<url-mongodb>:<port>/<database-name>
     // if the database doesn't exist, it will be create id
     if (!process.env.LOCAL) {
