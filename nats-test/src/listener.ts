@@ -8,7 +8,7 @@ console.clear();
 const stan = nats.connect('ticketing', randomBytes(4).toString('hex'), {
   url: 'http://localhost:4222',
 });
-console.log('Inside');
+// console.log('Inside');
 // Will be executed after it is connected
 stan.on('connect', () => {
   console.log('Listener connected to NATS');
@@ -19,7 +19,7 @@ stan.on('connect', () => {
     process.exit();
   });
 
-  new TicketCreatedListener(stan).listen;
+  new TicketCreatedListener(stan).listen();
 
   //NEEDED ONLY WITHOUT THE ABSTRACT CLASS
   // const options = stan
@@ -104,7 +104,7 @@ class TicketCreatedListener extends Listener {
   
   onMessage(data: any, msg: nats.Message): void {
     //Here goes all the business logic
-    console.log('Event data!');
+    console.log('Event data!', data);
 
     msg.ack();
   }
